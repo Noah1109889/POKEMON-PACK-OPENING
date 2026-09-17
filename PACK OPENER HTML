@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pokémon Pack Opening</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
+      background:
+        radial-gradient(circle at top, #3559a8, transparent 45%),
+        linear-gradient(135deg, #111936, #080b18);
+      overflow-x: hidden;
+    }
+
+    h1 {
+      margin: 30px 0 8px;
+      font-size: clamp(2rem, 6vw, 4rem);
+      text-shadow: 0 0 15px #ffd700;
+    }
+
+    .subtitle {
+      color: #d9e2ff;
+      margin-bottom: 24px;
+    }
+
+    .pack {
+      width: 210px;
+      height: 310px;
+      margin: 20px auto;
+      padding: 18px;
+      border: 5px solid #ffd43b;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #e73535, #7914a8);
+      box-shadow: 0 0 30px #ffda44;
+      cursor: pointer;
+      transition: transform 0.25s;
+      user-select: none;
+    }
+
+    .pack:hover {
+      transform: scale(1.05) rotate(2deg);
+    }
+
+    .pack h2 {
+      font-size: 2rem;
+      margin: 25px 0;
+      color: #ffe66d;
+      text-shadow: 3px 3px #222;
+    }
+
+    .pokeball {
+      width: 105px;
+      height: 105px;
+      margin: 30px auto;
+      border: 7px solid white;
+      border-radius: 50%;
+      background: linear-gradient(#ef4444 48%, #222 48% 55%, white 55%);
+      position: relative;
+    }
+
+    .pokeball::after {
+      content: "";
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      left: 31px;
+      top: 31px;
+      border: 5px solid #222;
+      border-radius: 50%;
+      background: white;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 14px 28px;
+      margin: 10px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #222;
+      background: #ffd43b;
+      cursor: pointer;
+      box-shadow: 0 5px 0 #b88600;
+    }
+
+    button:hover {
+      background: #ffe680;
+    }
+
+    button:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 #b88600;
+    }
+
+    .cards {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 18px;
+      max-width: 1100px;
+      margin: 28px auto;
+      padding: 10px;
+    }
+
+    .card {
+      width: 170px;
+      height: 245px;
+      padding: 10px;
+      border: 5px solid #ccc;
+      border-radius: 13px;
+      background: linear-gradient(145deg, #f8fafc, #cbd5e1);
+      color: #172033;
+      box-shadow: 0 7px 15px #0008;
+      transform: scale(0) rotateY(180deg);
+      animation: reveal 0.7s forwards;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent, #ffffff99, transparent);
+      transform: translateX(-130%);
+      animation: shine 1.3s 0.5s;
+    }
+
+    .card .image {
+      height: 125px;
+      display: grid;
+      place-items: center;
+      font-size: 5rem;
+      border-radius: 8px;
+      background: #bde0fe;
+      margin-bottom: 8px;
+    }
+
+    .card h3 {
+      margin: 5px 0;
+    }
+
+    .card p {
+      margin: 4px;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+
+    .common {
+      border-color: #9ca3af;
+    }
+
+    .uncommon {
+      border-color: #4ade80;
+      box-shadow: 0 0 18px #4ade80;
+    }
+
+    .rare {
+      border-color: #60a5fa;
+      box-shadow: 0 0 22px #60a5fa;
+    }
+
+    .ultra {
+      border-color: #facc15;
+      box-shadow: 0 0 28px #facc15;
+      background: linear-gradient(145deg, #fff7ad, #f59e0b);
+    }
+
+    .message {
+      min-height: 28px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #ffe66d;
+    }
+
+    @keyframes reveal {
+      to {
+        transform: scale(1) rotateY(0);
+      }
+    }
+
+    @keyframes shine {
+      to {
+        transform: translateX(130%);
+      }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: rotate(0); }
+      25% { transform: rotate(-7deg); }
+      75% { transform: rotate(7deg); }
+    }
+
+    .shaking {
+      animation: shake 0.4s infinite;
+    }
+
+    .sparkle {
+      position: fixed;
+      pointer-events: none;
+      font-size: 2rem;
+      animation: fall 1.2s linear forwards;
+    }
+
+    @keyframes fall {
+      from {
+        transform: translateY(-20px) rotate(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <h1>⚡ Pokémon Pack Opening ⚡</h1>
+  <p class="subtitle">Can you pull the rarest card?</p>
+
+  <div class="pack" id="pack">
+    <div class="pokeball"></div>
+    <h2>MONSTER<br />CARDS</h2>
+    <strong>5 CARDS</strong>
+  </div>
+
+  <button id="openButton">Open Pack</button>
+  <button id="resetButton">New Pack</button>
+
+  <div class="message" id="message"></div>
+  <div class="cards" id="cards"></div>
+
+  <script>
+    const pokemon = [
+      { name: "Pikachu", emoji: "⚡", rarity: "Rare", className: "rare" },
+      { name: "Charmander", emoji: "🔥", rarity: "Common", className: "common" },
+      { name: "Squirtle", emoji: "💧", rarity: "Common", className: "common" },
+      { name: "Bulbasaur", emoji: "🌱", rarity: "Uncommon", className: "uncommon" },
+      { name: "Eevee", emoji: "🦊", rarity: "Uncommon", className: "uncommon" },
+      { name: "Gengar", emoji: "👻", rarity: "Rare", className: "rare" },
+      { name: "Jigglypuff", emoji: "🎤", rarity: "Common", className: "common" },
+      { name: "Snorlax", emoji: "😴", rarity: "Rare", className: "rare" },
+      { name: "Mewtwo", emoji: "🧬", rarity: "Ultra Rare", className: "ultra" },
+      { name: "Lugia", emoji: "🪽", rarity: "Ultra Rare", className: "ultra" }
+    ];
+
+    const pack = document.getElementById("pack");
+    const openButton = document.getElementById("openButton");
+    const resetButton = document.getElementById("resetButton");
+    const cardsContainer = document.getElementById("cards");
+    const message = document.getElementById("message");
+
+    let packOpened = false;
+
+    function randomCard() {
+      return pokemon[Math.floor(Math.random() * pokemon.length)];
+    }
+
+    function createSparkles() {
+      for (let i = 0; i < 25; i++) {
+        const sparkle = document.createElement("div");
+        sparkle.className = "sparkle";
+        sparkle.textContent = ["✨", "⭐", "⚡", "💥"][Math.floor(Math.random() * 4)];
+        sparkle.style.left = Math.random() * 100 + "vw";
+        sparkle.style.top = Math.random() * 20 + "vh";
+        sparkle.style.animationDelay = Math.random() * 0.5 + "s";
+        document.body.appendChild(sparkle);
+
+        setTimeout(() => sparkle.remove(), 1800);
+      }
+    }
+
+    function openPack() {
+      if (packOpened) return;
+
+      packOpened = true;
+      pack.classList.add("shaking");
+      openButton.disabled = true;
+      message.textContent = "Opening pack...";
+
+      setTimeout(() => {
+        pack.classList.remove("shaking");
+        cardsContainer.innerHTML = "";
+
+        let bestCard = null;
+
+        for (let i = 0; i < 5; i++) {
+          const cardData = randomCard();
+
+          if (
+            !bestCard ||
+            cardData.rarity === "Ultra Rare" ||
+            (cardData.rarity === "Rare" && bestCard.rarity === "Common")
+          ) {
+            bestCard = cardData;
+          }
+
+          const card = document.createElement("div");
+          card.className = `card ${cardData.className}`;
+          card.style.animationDelay = `${i * 0.35}s`;
+
+          card.innerHTML = `
+            <div class="image">${cardData.emoji}</div>
+            <h3>${cardData.name}</h3>
+            <p>${cardData.rarity}</p>
+            <p>HP ${Math.floor(Math.random() * 120) + 40}</p>
+          `;
+
+          cardsContainer.appendChild(card);
+        }
+
+        message.textContent = `You pulled: ${bestCard.name} — ${bestCard.rarity}!`;
+
+        if (bestCard.rarity === "Ultra Rare" || bestCard.rarity === "Rare") {
+          createSparkles();
+        }
+      }, 1300);
+    }
+
+    function resetPack() {
+      packOpened = false;
+      cardsContainer.innerHTML = "";
+      message.textContent = "";
+      openButton.disabled = false;
+    }
+
+    openButton.addEventListener("click", openPack);
+    pack.addEventListener("click", openPack);
+    resetButton.addEventListener("click", resetPack);
+  </script>
+</body>
+</html>
